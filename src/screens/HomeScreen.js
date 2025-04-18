@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, FlatList } from 'react-native';
-import { subscribeToExpenses } from '../services/expenseService';
+import { View, Button } from 'react-native';
+import { subscribeToExpenses } from '../services/Expenseservice';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 
@@ -15,10 +15,7 @@ export default function HomeScreen() {
 
   return (
     <View>
-      <Button 
-        title={showForm ? "Hide Form" : "Add Expense"} 
-        onPress={() => setShowForm(!showForm)} 
-      />
+      <Button title={showForm ? "Hide Form" : "Add Expense"} onPress={() => setShowForm(!showForm)} />
       {showForm && <AddExpense onAdd={() => setShowForm(false)} />}
       <ExpenseList expenses={expenses} />
     </View>
