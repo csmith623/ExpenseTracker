@@ -3,30 +3,18 @@ import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
-export default function AuthScreen({ navigation }) {
+export default function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSignUp = async () => {
+  const handleAuth = async (isSignUp) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      Alert.alert('Success', 'Account created and signed in!');
-      navigation.replace('Home');
+      const action = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
+      await action(auth, email, password);
     } catch (err) {
       setError(err.message);
-      Alert.alert('Sign Up Error', err.message);
-    }
-  };
-
-  const handleLogin = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert('Success', 'Logged in!');
-      navigation.replace('Home');
-    } catch (err) {
-      setError(err.message);
-      Alert.alert('Login Error', err.message);
+      Alert.alert('Error', err.message);
     }
   };
 
@@ -48,10 +36,10 @@ export default function AuthScreen({ navigation }) {
         style={styles.input}
       />
       <View style={styles.buttonContainer}>
-        <Button title="Sign Up" onPress={handleSignUp} />
+        <Button title="Sign Up" onPress={() => handleAuth(true)} />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Login" onPress={handleLogin} />
+        <Button title="Login" onPress={() => handleAuth(false)} />
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
@@ -60,16 +48,32 @@ export default function AuthScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, backgroundColor: '#fff',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: '#fff'
   },
   input: {
-    width: '100%', maxWidth: 300, height: 50, borderColor: '#ccc', borderWidth: 1, borderRadius: 5,
-    paddingHorizontal: 15, marginBottom: 15, fontSize: 16, backgroundColor: '#fff',
+    width: '100%',
+    maxWidth: 300,
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 16,
+    backgroundColor: '#fff'
   },
   buttonContainer: {
-    width: '100%', maxWidth: 300, marginBottom: 10,
+    width: '100%',
+    maxWidth: 300,
+    marginBottom: 10
   },
   errorText: {
-    color: 'red', marginTop: 10, textAlign: 'center',
-  },
+    color: 'red',
+    marginTop: 10,
+    textAlign: 'center'
+  }
 });

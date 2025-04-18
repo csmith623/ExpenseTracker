@@ -8,6 +8,7 @@ export default function ExpenseList({ expenses }) {
       data={expenses}
       keyExtractor={item => item.id}
       renderItem={({ item }) => <ExpenseItem expense={item} />}
+      contentContainerStyle={{ paddingBottom: 80 }}
     />
   );
 }

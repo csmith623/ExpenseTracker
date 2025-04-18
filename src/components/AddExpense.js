@@ -1,88 +1,135 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { View, TextInput, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { addExpense } from '../services/ExpenseService';
+import { auth } from '../firebase';
 
 export default function AddExpense({ onAdd }) {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Food');
   const categories = ['Food', 'Transport', 'Housing', 'Entertainment'];
 
   const handleSubmit = async () => {
     try {
-      if (name && amount) {
-        await addExpense({
-          name,
-          amount: parseFloat(amount),
-          category,
-          userId: auth.currentUser.uid // Ensure user ID is included
-        });
-        onAdd();
-        setName('');
-        setAmount('');
+      if (!name || !amount || !description) {
+        Alert.alert('Error', 'Please fill all fields');
+        return;
       }
+      await addExpense({
+        name,
+        amount: parseFloat(amount),
+        description,
+        category,
+        userId: auth.currentUser.uid
+      });
+      onAdd();
+      setName('');
+      setAmount('');
+      setDescription('');
+      Keyboard.dismiss();
     } catch (error) {
-      Alert.alert('Error', 'Failed to save expense: ' + error.message);
+      Alert.alert('Error', error.message);
     }
   };
 
   return (
-    <View style={styles.formContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder="Expense Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Amount"
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-      />
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={category}
-          onValueChange={setCategory}
-          style={styles.picker}
-        >
-          {categories.map(cat => (
-            <Picker.Item key={cat} label={cat} value={cat} />
-          ))}
-        </Picker>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <TextInput
+          placeholder="Expense Name"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+          placeholderTextColor="#666"
+        />
+        <TextInput
+          placeholder="Amount"
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
+          style={styles.input}
+          placeholderTextColor="#666"
+        />
+        <TextInput
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+          style={styles.input}
+          placeholderTextColor="#666"
+        />
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={category}
+            onValueChange={setCategory}
+            style={styles.picker}
+            itemStyle={styles.pickerItem}
+          >
+            {categories.map(cat => (
+              <Picker.Item key={cat} label={cat} value={cat} />
+            ))}
+          </Picker>
+        </View>
+        <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
+          <Text style={styles.addButtonText}>Add Expense</Text>
+        </TouchableOpacity>
       </View>
-      <Button 
-        title="Add Expense" 
-        onPress={handleSubmit} 
-        color="#4CAF50"
-      />
-    </View>
+    </TouchableWithoutFeedback>
   );
-  
-  const styles = StyleSheet.create({
-    formContainer: {
-      marginVertical: 20,
-      width: '100%'
-    },
-    input: {
-      height: 40,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      borderRadius: 5,
-      marginBottom: 15,
-      paddingHorizontal: 10,
-      backgroundColor: 'white'
-    },
-    pickerContainer: {
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 5,
-      marginBottom: 15
-    },
-    picker: {
-      height: 50,
-      width: '100%'
-    }
-  });
+}
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    elevation: 5,
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    backgroundColor: '#FAFAFA'
+  },
+  pickerContainer: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    marginBottom: 15,
+    backgroundColor: '#FAFAFA',
+    justifyContent: 'center',
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+  },
+  pickerItem: {
+    fontSize: 16,
+    height: 44,
+  },
+  addButton: {
+    marginTop: 10,
+    backgroundColor: '#4CAF50',
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center'
+  },
+  addButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    letterSpacing: 1,
+  },
+});
