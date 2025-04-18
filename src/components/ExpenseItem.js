@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-import { deleteExpense } from '../services/Expenseservice';
+import { deleteExpense } from '../services/ExpenseService';
 
 export default function ExpenseItem({ expense }) {
   return (
