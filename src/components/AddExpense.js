@@ -21,13 +21,14 @@ export default function AddExpense({ onAdd }) {
         name,
         amount: parseFloat(amount),
         description,
-        category,
+        category, // this is the current picker value
         userId: auth.currentUser.uid
       });
       onAdd();
       setName('');
       setAmount('');
       setDescription('');
+      setCategory('Food'); // Reset picker to default
       Keyboard.dismiss();
     } catch (error) {
       Alert.alert('Error', error.message);
