@@ -13,7 +13,7 @@ export default function ExpenseItem({ expense }) {
       <View style={styles.textContainer}>
         <Text style={styles.name}>{expense.name}</Text>
         <Text style={styles.details}>
-          ${formatAmount(expense.amount)} • {expense.category}
+            ${formatAmount(expense.amount)}
         </Text>
         {expense.description ? (
           <Text style={styles.description}>{expense.description}</Text>
