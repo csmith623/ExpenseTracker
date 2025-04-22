@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { useTheme } from '../context/ThemeContext';
 
 export default function AuthScreen() {
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,27 +21,34 @@ export default function AuthScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      {/* Login/Welcome Title */}
+      <Text style={[styles.title, {color: theme.colors.text}]}>Login / Welcome</Text>
+      
       <TextInput
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        style={styles.input}
+        style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
         keyboardType="email-address"
         autoCapitalize="none"
+        placeholderTextColor="#666"
+        accessibilityLabel="Email"
       />
       <TextInput
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={styles.input}
+        style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
+        placeholderTextColor="#666"
+        accessibilityLabel="Password"
       />
       <View style={styles.buttonContainer}>
-        <Button title="Sign Up" onPress={() => handleAuth(true)} />
+        <Button title="Sign Up" onPress={() => handleAuth(true)} accessibilityLabel="Sign up" />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Login" onPress={() => handleAuth(false)} />
+        <Button title="Login" onPress={() => handleAuth(false)} accessibilityLabel="Login" />
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
@@ -48,32 +57,23 @@ export default function AuthScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#fff'
+    flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    textAlign: 'center',
+    letterSpacing: 1,
   },
   input: {
-    width: '100%',
-    maxWidth: 300,
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: 16,
-    backgroundColor: '#fff'
+    width: '100%', maxWidth: 300, height: 50, borderWidth: 1, borderRadius: 5,
+    paddingHorizontal: 15, marginBottom: 15, fontSize: 16, backgroundColor: '#fff',
   },
   buttonContainer: {
-    width: '100%',
-    maxWidth: 300,
-    marginBottom: 10
+    width: '100%', maxWidth: 300, marginBottom: 10,
   },
   errorText: {
-    color: 'red',
-    marginTop: 10,
-    textAlign: 'center'
+    color: 'red', marginTop: 10, textAlign: 'center',
   }
 });
