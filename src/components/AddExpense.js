@@ -3,8 +3,10 @@ import { View, TextInput, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback,
 import { Picker } from '@react-native-picker/picker';
 import { addExpense } from '../services/ExpenseService';
 import { auth } from '../firebase';
+import { useTheme } from '../context/ThemeContext';
 
 export default function AddExpense({ onAdd }) {
+  const { theme } = useTheme();
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -21,14 +23,14 @@ export default function AddExpense({ onAdd }) {
         name,
         amount: parseFloat(amount),
         description,
-        category, // this is the current picker value
+        category,
         userId: auth.currentUser.uid
       });
       onAdd();
       setName('');
       setAmount('');
       setDescription('');
-      setCategory('Food'); // Reset picker to default
+      setCategory('Food');
       Keyboard.dismiss();
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -37,42 +39,50 @@ export default function AddExpense({ onAdd }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: theme.colors.card}]}>
         <TextInput
           placeholder="Expense Name"
           value={name}
           onChangeText={setName}
-          style={styles.input}
+          style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
           placeholderTextColor="#666"
+          accessibilityLabel="Expense Name"
         />
         <TextInput
           placeholder="Amount"
           value={amount}
           onChangeText={setAmount}
           keyboardType="numeric"
-          style={styles.input}
+          style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
           placeholderTextColor="#666"
+          accessibilityLabel="Amount"
         />
         <TextInput
           placeholder="Description"
           value={description}
           onChangeText={setDescription}
-          style={styles.input}
+          style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
           placeholderTextColor="#666"
+          accessibilityLabel="Description"
         />
-        <View style={styles.pickerContainer}>
+        <View style={[styles.pickerContainer, {borderColor: theme.colors.border, backgroundColor: theme.colors.background}]}>
           <Picker
             selectedValue={category}
             onValueChange={setCategory}
             style={styles.picker}
             itemStyle={styles.pickerItem}
+            accessibilityLabel="Category"
           >
             {categories.map(cat => (
               <Picker.Item key={cat} label={cat} value={cat} />
             ))}
           </Picker>
         </View>
-        <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
+        <TouchableOpacity
+          style={[styles.addButton, {backgroundColor: theme.accent}]}
+          onPress={handleSubmit}
+          accessibilityLabel="Add this expense to your list"
+        >
           <Text style={styles.addButtonText}>Add Expense</Text>
         </TouchableOpacity>
       </View>
@@ -84,7 +94,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     padding: 20,
-    backgroundColor: 'white',
     borderRadius: 12,
     elevation: 5,
     alignItems: 'center',
@@ -92,7 +101,6 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     height: 50,
-    borderColor: '#E0E0E0',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 15,
@@ -103,10 +111,8 @@ const styles = StyleSheet.create({
   pickerContainer: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#E0E0E0',
     borderRadius: 8,
     marginBottom: 15,
-    backgroundColor: '#FAFAFA',
     justifyContent: 'center',
   },
   picker: {
@@ -119,7 +125,6 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginTop: 10,
-    backgroundColor: '#4CAF50',
     borderRadius: 8,
     paddingVertical: 14,
     paddingHorizontal: 40,

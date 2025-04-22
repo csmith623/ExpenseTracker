@@ -3,8 +3,10 @@ import { View, StyleSheet, TouchableOpacity, Text, Modal, SafeAreaView } from 'r
 import { subscribeToExpenses } from '../services/ExpenseService';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
+import { useTheme } from '../context/ThemeContext';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
+  const { theme } = useTheme();
   const [expenses, setExpenses] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
@@ -14,8 +16,17 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Expense Tracker</Text>
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      <View style={styles.headerRow}>
+        <Text style={[styles.heading, {color: theme.colors.text}]}>Expense Tracker</Text>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={() => navigation.navigate('Settings')}
+          accessibilityLabel="Open settings"
+        >
+          <Text style={{fontSize: 24, color: theme.accent}}>⚙️</Text>
+        </TouchableOpacity>
+      </View>
       <ExpenseList expenses={expenses} />
 
       <Modal
@@ -27,20 +38,22 @@ export default function HomeScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <AddExpense onAdd={() => setShowForm(false)} />
-            <TouchableOpacity 
-              onPress={() => setShowForm(false)} 
+            <TouchableOpacity
+              onPress={() => setShowForm(false)}
               style={styles.closeButton}
+              accessibilityLabel="Close add expense form"
             >
-              <Text style={styles.closeButtonText}>Close</Text>
+              <Text style={[styles.closeButtonText, {color: theme.accent}]}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, {backgroundColor: theme.accent}]}
         onPress={() => setShowForm(true)}
         activeOpacity={0.7}
+        accessibilityLabel="Add a new expense"
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
@@ -51,21 +64,28 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
     paddingTop: 20
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 10
   },
   heading: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#2196F3',
-    textAlign: 'center',
-    marginBottom: 10
+    marginBottom: 0
+  },
+  settingsButton: {
+    padding: 8,
+    borderRadius: 20,
   },
   fab: {
     position: 'absolute',
     right: 30,
     bottom: 40,
-    backgroundColor: '#2196F3',
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -88,15 +108,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 14,
     padding: 20,
-    width: '90%'
+    width: '90%',
+    alignItems: 'center',
+    elevation: 10,
   },
   closeButton: {
     marginTop: 10,
-    padding: 10
+    padding: 10,
+    alignSelf: 'center',
   },
   closeButtonText: {
-    color: '#2196F3',
     fontWeight: 'bold',
-    fontSize: 16
+    fontSize: 16,
   }
 });
