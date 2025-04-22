@@ -22,8 +22,8 @@ export default function AuthScreen() {
 
   return (
     <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
-      {/* Login/Welcome Title */}
-      <Text style={[styles.title, {color: theme.colors.text}]}>Login / Welcome</Text>
+      {/* Welcome Title */}
+      <Text style={[styles.title, {color: theme.colors.text}]}>Welcome!</Text>
       
       <TextInput
         placeholder="Email"
