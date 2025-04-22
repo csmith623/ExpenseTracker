@@ -18,7 +18,6 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]}>
       <View style={styles.headerRow}>
-        <Text style={[styles.heading, {color: theme.colors.text}]}>Expense Tracker</Text>
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={() => navigation.navigate('Settings')}

@@ -12,7 +12,11 @@ export default function AppNavigator({ user }) {
         <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
       ) : (
         <>
-          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Expense Tracker' }} />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ title: 'Home' }} // <-- This sets the header title
+          />
           <Stack.Screen name="Settings" component={SettingsScreen} />
         </>
       )}
