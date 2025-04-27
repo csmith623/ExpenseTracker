@@ -11,7 +11,7 @@ export default function AddExpense({ onAdd }) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Food');
-  const categories = ['Food', 'Transport', 'Housing', 'Entertainment'];
+  const categories = ['Food', 'Transport', 'Housing', 'Entertainment', 'Utilities', 'Shopping', 'Other'];
 
   const handleSubmit = async () => {
     try {
