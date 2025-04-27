@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Text } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker'; // Make sure this is installed!
 import { addExpense } from '../services/ExpenseService';
 import { auth } from '../firebase';
 import { useTheme } from '../context/ThemeContext';
@@ -11,7 +11,9 @@ export default function AddExpense({ onAdd }) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Food');
-  const categories = ['Food', 'Transport', 'Housing', 'Entertainment', 'Utilities', 'Shopping', 'Other'];
+  const categories = [
+    'Food', 'Transport', 'Housing', 'Entertainment', 'Utilities', 'Shopping', 'Other'
+  ];
 
   const handleSubmit = async () => {
     try {
@@ -65,6 +67,7 @@ export default function AddExpense({ onAdd }) {
           placeholderTextColor="#666"
           accessibilityLabel="Description"
         />
+        {/* Dropdown menu for category */}
         <View style={[styles.pickerContainer, {borderColor: theme.colors.border, backgroundColor: theme.colors.background}]}>
           <Picker
             selectedValue={category}
@@ -72,6 +75,7 @@ export default function AddExpense({ onAdd }) {
             style={styles.picker}
             itemStyle={styles.pickerItem}
             accessibilityLabel="Category"
+            mode="dropdown" // On Android, this makes it a dropdown
           >
             {categories.map(cat => (
               <Picker.Item key={cat} label={cat} value={cat} />

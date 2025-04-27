@@ -10,16 +10,14 @@ export default function HomeScreen({ navigation }) {
   const [expenses, setExpenses] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
-  // Subscribe to expenses from Firebase
+  // Real-time subscription to Firebase expenses
   useEffect(() => {
     const unsubscribe = subscribeToExpenses(setExpenses);
     return unsubscribe;
   }, []);
 
-  // Calculate total spent
+  // Calculate totals
   const totalSpent = expenses.reduce((sum, exp) => sum + (Number(exp.amount) || 0), 0);
-
-  // Calculate per-category totals
   const categoryTotals = expenses.reduce((acc, exp) => {
     acc[exp.category] = (acc[exp.category] || 0) + (Number(exp.amount) || 0);
     return acc;
@@ -38,24 +36,28 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* --- Summary View --- */}
+      {/* Summary Section */}
       <View style={[styles.summaryContainer, {backgroundColor: theme.colors.card, borderColor: theme.colors.border}]}>
         <Text style={[styles.summaryTitle, {color: theme.colors.text}]}>Summary</Text>
         <Text style={[styles.summaryTotal, {color: theme.accent}]}>
-          Total Spent: ${totalSpent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+          Total: ${totalSpent.toFixed(2)}
         </Text>
-        <ScrollView style={styles.summaryList} contentContainerStyle={{paddingBottom: 10}}>
-          {Object.entries(categoryTotals).map(([cat, amt]) => (
-            <Text key={cat} style={[styles.summaryCategory, {color: theme.colors.text}]}>
-              {cat}: ${amt.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-            </Text>
+        <ScrollView style={styles.summaryList}>
+          {Object.entries(categoryTotals).map(([category, amount]) => (
+            <View key={category} style={styles.summaryRow}>
+              <Text style={[styles.categoryText, {color: theme.colors.text}]}>{category}</Text>
+              <Text style={[styles.amountText, {color: theme.colors.text}]}>
+                ${amount.toFixed(2)}
+              </Text>
+            </View>
           ))}
         </ScrollView>
       </View>
-      {/* --- End Summary View --- */}
 
+      {/* Expense List */}
       <ExpenseList expenses={expenses} />
 
+      {/* Add Expense Modal */}
       <Modal
         visible={showForm}
         animationType="slide"
@@ -63,12 +65,11 @@ export default function HomeScreen({ navigation }) {
         onRequestClose={() => setShowForm(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, {backgroundColor: theme.colors.card}]}>
             <AddExpense onAdd={() => setShowForm(false)} />
             <TouchableOpacity
               onPress={() => setShowForm(false)}
               style={styles.closeButton}
-              accessibilityLabel="Close add expense form"
             >
               <Text style={[styles.closeButtonText, {color: theme.accent}]}>Close</Text>
             </TouchableOpacity>
@@ -76,11 +77,11 @@ export default function HomeScreen({ navigation }) {
         </View>
       </Modal>
 
+      {/* FAB */}
       <TouchableOpacity
         style={[styles.fab, {backgroundColor: theme.accent}]}
         onPress={() => setShowForm(true)}
         activeOpacity={0.7}
-        accessibilityLabel="Add a new expense"
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
@@ -95,82 +96,80 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
-    marginBottom: 10
+    marginBottom: 15
   },
   heading: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 0
-  },
-  settingsButton: {
-    padding: 8,
-    borderRadius: 20,
+    fontSize: 24,
+    fontWeight: 'bold'
   },
   summaryContainer: {
-    borderWidth: 1,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 20,
-    marginBottom: 10,
-    elevation: 2,
+    marginBottom: 15,
+    elevation: 3
   },
   summaryTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 6,
+    marginBottom: 10
   },
   summaryTotal: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontWeight: '600',
+    marginBottom: 15
   },
   summaryList: {
-    maxHeight: 100,
+    maxHeight: 150
   },
-  summaryCategory: {
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8
+  },
+  categoryText: {
+    fontSize: 16
+  },
+  amountText: {
     fontSize: 16,
-    marginBottom: 2,
+    fontWeight: '500'
   },
   fab: {
     position: 'absolute',
-    right: 30,
-    bottom: 40,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    right: 25,
+    bottom: 25,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 5
   },
   fabText: {
     color: 'white',
-    fontSize: 32,
-    fontWeight: 'bold'
+    fontSize: 28,
+    marginBottom: 4
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center'
   },
   modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 14,
+    borderRadius: 15,
     padding: 20,
-    width: '90%',
-    alignItems: 'center',
-    elevation: 10,
+    width: '90%'
   },
   closeButton: {
-    marginTop: 10,
-    padding: 10,
     alignSelf: 'center',
+    marginTop: 15
   },
   closeButtonText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 16
   }
 });
