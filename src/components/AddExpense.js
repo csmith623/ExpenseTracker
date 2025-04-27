@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Text } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { addExpense } from '../services/ExpenseService';
@@ -76,37 +76,42 @@ export default function AddExpense({ onAdd }) {
           placeholderTextColor="#666"
           accessibilityLabel="Description"
         />
-        {/* Dropdown menu for category */}
-        <DropDownPicker
-          open={open}
-          value={category}
-          items={categories}
-          setOpen={setOpen}
-          setValue={setCategory}
-          setItems={setCategories}
-          placeholder="Select a category"
-          style={{
-            marginBottom: 15,
-            borderColor: theme.colors.border,
-            backgroundColor: theme.colors.background,
-          }}
-          dropDownContainerStyle={{
-            borderColor: theme.colors.border,
-            backgroundColor: theme.colors.card,
-          }}
-          textStyle={{
-            color: theme.colors.text,
-            fontSize: 16,
-          }}
-          accessibilityLabel="Category"
-        />
-        <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: theme.accent }]}
-          onPress={handleSubmit}
-          accessibilityLabel="Add this expense to your list"
-        >
-          <Text style={styles.addButtonText}>Add Expense</Text>
-        </TouchableOpacity>
+        {/* Dropdown menu for category with dynamic zIndex */}
+        <View style={{ zIndex: open ? 1000 : 1, width: '100%' }}>
+          <DropDownPicker
+            open={open}
+            value={category}
+            items={categories}
+            setOpen={setOpen}
+            setValue={setCategory}
+            setItems={setCategories}
+            placeholder="Select a category"
+            style={{
+              marginBottom: 15,
+              borderColor: theme.colors.border,
+              backgroundColor: theme.colors.background,
+            }}
+            dropDownContainerStyle={{
+              borderColor: theme.colors.border,
+              backgroundColor: theme.colors.card,
+            }}
+            textStyle={{
+              color: theme.colors.text,
+              fontSize: 16,
+            }}
+            accessibilityLabel="Category"
+          />
+        </View>
+        {/* Only show the Close button when the dropdown is NOT open */}
+        {!open && (
+          <TouchableOpacity
+            style={[styles.addButton, { backgroundColor: theme.accent }]}
+            onPress={handleSubmit}
+            accessibilityLabel="Add this expense to your list"
+          >
+            <Text style={styles.addButtonText}>Add Expense</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
