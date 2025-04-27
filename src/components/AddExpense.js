@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, TextInput, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Text } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Make sure this is installed!
+import DropDownPicker from 'react-native-dropdown-picker';
 import { addExpense } from '../services/ExpenseService';
 import { auth } from '../firebase';
 import { useTheme } from '../context/ThemeContext';
@@ -10,10 +10,19 @@ export default function AddExpense({ onAdd }) {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+
+  // Dropdown state
+  const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('Food');
-  const categories = [
-    'Food', 'Transport', 'Housing', 'Entertainment', 'Utilities', 'Shopping', 'Other'
-  ];
+  const [categories, setCategories] = useState([
+    { label: 'Food', value: 'Food' },
+    { label: 'Transport', value: 'Transport' },
+    { label: 'Housing', value: 'Housing' },
+    { label: 'Entertainment', value: 'Entertainment' },
+    { label: 'Utilities', value: 'Utilities' },
+    { label: 'Shopping', value: 'Shopping' },
+    { label: 'Other', value: 'Other' },
+  ]);
 
   const handleSubmit = async () => {
     try {
@@ -41,12 +50,12 @@ export default function AddExpense({ onAdd }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={[styles.container, {backgroundColor: theme.colors.card}]}>
+      <View style={[styles.container, { backgroundColor: theme.colors.card }]}>
         <TextInput
           placeholder="Expense Name"
           value={name}
           onChangeText={setName}
-          style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
+          style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]}
           placeholderTextColor="#666"
           accessibilityLabel="Expense Name"
         />
@@ -55,7 +64,7 @@ export default function AddExpense({ onAdd }) {
           value={amount}
           onChangeText={setAmount}
           keyboardType="numeric"
-          style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
+          style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]}
           placeholderTextColor="#666"
           accessibilityLabel="Amount"
         />
@@ -63,27 +72,36 @@ export default function AddExpense({ onAdd }) {
           placeholder="Description"
           value={description}
           onChangeText={setDescription}
-          style={[styles.input, {color: theme.colors.text, borderColor: theme.colors.border}]}
+          style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]}
           placeholderTextColor="#666"
           accessibilityLabel="Description"
         />
         {/* Dropdown menu for category */}
-        <View style={[styles.pickerContainer, {borderColor: theme.colors.border, backgroundColor: theme.colors.background}]}>
-          <Picker
-            selectedValue={category}
-            onValueChange={setCategory}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            accessibilityLabel="Category"
-            mode="dropdown" // On Android, this makes it a dropdown
-          >
-            {categories.map(cat => (
-              <Picker.Item key={cat} label={cat} value={cat} />
-            ))}
-          </Picker>
-        </View>
+        <DropDownPicker
+          open={open}
+          value={category}
+          items={categories}
+          setOpen={setOpen}
+          setValue={setCategory}
+          setItems={setCategories}
+          placeholder="Select a category"
+          style={{
+            marginBottom: 15,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.background,
+          }}
+          dropDownContainerStyle={{
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.card,
+          }}
+          textStyle={{
+            color: theme.colors.text,
+            fontSize: 16,
+          }}
+          accessibilityLabel="Category"
+        />
         <TouchableOpacity
-          style={[styles.addButton, {backgroundColor: theme.accent}]}
+          style={[styles.addButton, { backgroundColor: theme.accent }]}
           onPress={handleSubmit}
           accessibilityLabel="Add this expense to your list"
         >
@@ -111,21 +129,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
     backgroundColor: '#FAFAFA'
-  },
-  pickerContainer: {
-    width: '100%',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 15,
-    justifyContent: 'center',
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-  },
-  pickerItem: {
-    fontSize: 16,
-    height: 44,
   },
   addButton: {
     marginTop: 10,
